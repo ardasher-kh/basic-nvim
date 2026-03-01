@@ -1,5 +1,4 @@
 vim.opt.termguicolors = true
-vim.cmd.colorscheme("habamax")
 
 local function set_transparent() -- set UI component to transparent
 	local groups = {
@@ -269,6 +268,11 @@ vim.keymap.set("n", "k", function()
 	return vim.v.count == 0 and "gk" or "k"
 end, { expr = true, silent = true, desc = "Up (wrap-aware)" })
 
+-- Exit Neovim: Closes all tabs/windows and asks to save unsaved buffers
+vim.keymap.set("n", "<leader>qq", "<cmd>confirm qall<CR>", { desc = "Exit Neovim with save prompt" })
+
+vim.keymap.set("i", "jk", "<Esc>", { desc = "Switch to normal mode" })
+vim.keymap.set("v", "jk", "<Esc>", { desc = "Switch to normal mode" })
 vim.keymap.set("n", "<leader>c", ":nohlsearch<CR>", { desc = "Clear search highlights" })
 
 vim.keymap.set("n", "n", "nzzzv", { desc = "Next search result (centered)" })
@@ -387,7 +391,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 -- return to last cursor position
 vim.api.nvim_create_autocmd("BufReadPost", {
 	group = augroup,
-  
 	desc = "Restore last cursor position",
 	callback = function()
 		if vim.o.diff then -- except in diff mode
@@ -424,6 +427,8 @@ vim.pack.add({
 	"https://www.github.com/echasnovski/mini.nvim",
 	"https://www.github.com/ibhagwan/fzf-lua",
 	"https://www.github.com/nvim-tree/nvim-tree.lua",
+	"https://github.com/mrcjkb/rustaceanvim",
+	"https://github.com/Shatur/neovim-ayu",
 	{
 		src = "https://github.com/nvim-treesitter/nvim-treesitter",
 		branch = "main",
@@ -458,6 +463,13 @@ packadd("LuaSnip")
 -- ============================================================================
 -- PLUGIN CONFIGS
 -- ============================================================================
+require("ayu").setup({
+	mirage = true, -- Set to `true` to use `mirage` variant instead of `dark` for dark background.
+	terminal = true, -- Set to `false` to let terminal manage its own colors.
+	overrides = {}, -- A dictionary of group names, each associated with a dictionary of parameters (`bg`, `fg`, `sp` and `style`) and colors in hex.
+})
+
+vim.cmd.colorscheme("ayu")
 
 local setup_treesitter = function()
 	local treesitter = require("nvim-treesitter")
@@ -481,6 +493,7 @@ local setup_treesitter = function()
 		"svelte",
 		"bash",
 		"lua",
+
 		"python",
 	}
 
@@ -659,7 +672,7 @@ local function lsp_on_attach(ev)
 	local opts = { noremap = true, silent = true, buffer = bufnr }
 
 	vim.keymap.set("n", "<leader>gd", function()
-		require("fzf-lua").lsp_definitions({ jump_to_single_result = true })
+		require("fzf-lua").lsp_definitions({ jump1 = true })
 	end, opts)
 
 	vim.keymap.set("n", "<leader>gD", vim.lsp.buf.definition, opts)
@@ -691,7 +704,7 @@ local function lsp_on_attach(ev)
 	vim.keymap.set("n", "<leader>fd", function()
 		require("fzf-lua").lsp_definitions({ jump_to_single_result = true })
 	end, opts)
-	vim.keymap.set("n", "<leader>fr", function()
+	vim.keymap.set("n", "<leader>gr", function()
 		require("fzf-lua").lsp_references()
 	end, opts)
 	vim.keymap.set("n", "<leader>ft", function()

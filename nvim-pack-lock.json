@@ -29,6 +29,10 @@
       "rev": "0098de999048af0539183d625c52d733318a441b",
       "src": "https://www.github.com/echasnovski/mini.nvim"
     },
+    "neovim-ayu": {
+      "rev": "e5a9f0fa2918d6b5f57c21b3ac014314ee5e41c8",
+      "src": "https://github.com/Shatur/neovim-ayu"
+    },
     "nvim-lspconfig": {
       "rev": "ead0f5f342d8d323441e7d4b88f0fc436a81ad5f",
       "src": "https://www.github.com/neovim/nvim-lspconfig"
@@ -40,6 +44,10 @@
     "nvim-treesitter": {
       "rev": "6bc51d020a5e06b7e20ea82dbc47196d3d3027c7",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter"
+    },
+    "rustaceanvim": {
+      "rev": "d50597d482a6f44ddfc54d1af2f69f052053b4de",
+      "src": "https://github.com/mrcjkb/rustaceanvim"
     }
   }
 }
