@@ -46,7 +46,7 @@ vim.opt.hlsearch = true -- highlight search matches
 vim.opt.incsearch = true -- show matches as you type
 
 vim.opt.signcolumn = "yes" -- always show a sign column
-vim.opt.colorcolumn = "100" -- show a column at 100 position chars
+vim.opt.colorcolumn = "80" -- show a column at 100 position chars
 vim.opt.showmatch = true -- highlights matching brackets
 vim.opt.cmdheight = 1 -- single line command line
 vim.opt.completeopt = "menuone,noinsert,noselect" -- completion options
@@ -272,7 +272,9 @@ end, { expr = true, silent = true, desc = "Up (wrap-aware)" })
 vim.keymap.set("n", "<leader>qq", "<cmd>confirm qall<CR>", { desc = "Exit Neovim with save prompt" })
 
 vim.keymap.set("i", "jk", "<Esc>", { desc = "Switch to normal mode" })
+vim.keymap.set("i", "JK", "<Esc>", { desc = "Switch to normal mode" })
 vim.keymap.set("v", "jk", "<Esc>", { desc = "Switch to normal mode" })
+vim.keymap.set("i", "JK", "<Esc>", { desc = "Switch to normal mode" })
 vim.keymap.set("n", "<leader>c", ":nohlsearch<CR>", { desc = "Clear search highlights" })
 
 vim.keymap.set("n", "n", "nzzzv", { desc = "Next search result (centered)" })
@@ -671,13 +673,13 @@ local function lsp_on_attach(ev)
 	local bufnr = ev.buf
 	local opts = { noremap = true, silent = true, buffer = bufnr }
 
-	vim.keymap.set("n", "<leader>gd", function()
+	vim.keymap.set("n", "gd", function()
 		require("fzf-lua").lsp_definitions({ jump1 = true })
 	end, opts)
 
-	vim.keymap.set("n", "<leader>gD", vim.lsp.buf.definition, opts)
+	vim.keymap.set("n", "gD", vim.lsp.buf.definition, opts)
 
-	vim.keymap.set("n", "<leader>gS", function()
+	vim.keymap.set("n", "gS", function()
 		vim.cmd("vsplit")
 		vim.lsp.buf.definition()
 	end, opts)
@@ -704,7 +706,7 @@ local function lsp_on_attach(ev)
 	vim.keymap.set("n", "<leader>fd", function()
 		require("fzf-lua").lsp_definitions({ jump_to_single_result = true })
 	end, opts)
-	vim.keymap.set("n", "<leader>gr", function()
+	vim.keymap.set("n", "gr", function()
 		require("fzf-lua").lsp_references()
 	end, opts)
 	vim.keymap.set("n", "<leader>ft", function()
