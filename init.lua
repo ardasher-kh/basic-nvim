@@ -603,7 +603,30 @@ require("gitsigns").setup({
 	current_line_blame = false,
 })
 
+-- Automatic package installation.
+
 require("mason").setup({})
+
+local mr = require("mason-registry")
+
+local packages = {
+    "lua-language-server",
+    "bash-language-server",
+    "typescript-language-server",
+    "gopls",
+    "terraform-ls",
+    "yaml-language-server",
+    "clangd",
+    "ansible-language-server",
+    "efm",
+}
+
+for _, name in ipairs(packages) do
+    local ok, pkg = pcall(mr.get_package, name)
+    if ok and not pkg:is_installed() then
+        pkg:install()
+    end
+end
 
 vim.keymap.set("n", "]h", function()
 	require("gitsigns").next_hunk()
@@ -791,6 +814,7 @@ vim.lsp.config("lua_ls", {
 vim.lsp.config("bashls", {})
 vim.lsp.config("ts_ls", {})
 vim.lsp.config("gopls", {})
+vim.lsp.config("terraformls", {})
 vim.lsp.config("clangd", {})
 vim.lsp.config("yamlls", {})
 
@@ -866,9 +890,10 @@ vim.lsp.enable({
 	"bashls",
 	"ts_ls",
 	"gopls",
-  "yamlls",
+        "terraformls",
+        "yamlls",
 	"clangd",
-  "ansiblels",
+        "ansiblels",
 	"efm",
 })
 
@@ -883,3 +908,6 @@ vim.filetype.add({
     [".*/playbooks/.*%.ya?ml"] = "yaml.ansible",
   },
 })
+
+vim.opt.langmap =
+   "ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz"
