@@ -353,8 +353,8 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 		"*.cpp",
 		"*.h",
 		"*.hpp",
-    "*.rs",
-    "*.toml"
+		"*.rs",
+		"*.toml",
 	},
 	callback = function(args)
 		-- avoid formatting non-file buffers (helps prevent weird write prompts)
@@ -500,10 +500,10 @@ local setup_treesitter = function()
 		"svelte",
 		"bash",
 		"lua",
-    "toml",
-    "yaml",
-    "hcl",
-    "dockerfile",
+		"toml",
+		"yaml",
+		"hcl",
+		"dockerfile",
 		"python",
 	}
 
@@ -610,22 +610,22 @@ require("mason").setup({})
 local mr = require("mason-registry")
 
 local packages = {
-    "lua-language-server",
-    "bash-language-server",
-    "typescript-language-server",
-    "gopls",
-    "terraform-ls",
-    "yaml-language-server",
-    "clangd",
-    "ansible-language-server",
-    "efm",
+	"lua-language-server",
+	"bash-language-server",
+	"typescript-language-server",
+	"gopls",
+	"terraform-ls",
+	"yaml-language-server",
+	"clangd",
+	"ansible-language-server",
+	"efm",
 }
 
 for _, name in ipairs(packages) do
-    local ok, pkg = pcall(mr.get_package, name)
-    if ok and not pkg:is_installed() then
-        pkg:install()
-    end
+	local ok, pkg = pcall(mr.get_package, name)
+	if ok and not pkg:is_installed() then
+		pkg:install()
+	end
 end
 
 vim.keymap.set("n", "]h", function()
@@ -890,24 +890,24 @@ vim.lsp.enable({
 	"bashls",
 	"ts_ls",
 	"gopls",
-        "terraformls",
-        "yamlls",
+	"terraformls",
+	"yamlls",
 	"clangd",
-        "ansiblels",
+	"ansiblels",
 	"efm",
 })
-
 
 -- ============================================================================
 -- Filetype woodoo shit
 -- ============================================================================
 
 vim.filetype.add({
-  pattern = {
-    [".*/roles/.*/tasks/.*%.ya?ml"] = "yaml.ansible",
-    [".*/playbooks/.*%.ya?ml"] = "yaml.ansible",
-  },
+	pattern = {
+		[".*/roles/.*/tasks/.*%.ya?ml"] = "yaml.ansible",
+		[".*/playbooks/.*%.ya?ml"] = "yaml.ansible",
+	},
 })
 
 vim.opt.langmap =
-   "ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz"
+	"ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz"
+
