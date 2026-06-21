@@ -334,6 +334,8 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 	group = augroup,
 	pattern = {
 		"*.lua",
+		"*.rs",
+		"*.toml",
 		"*.py",
 		"*.go",
 		"*.js",
@@ -832,6 +834,7 @@ do
 			"typescriptreact",
 			"vue",
 			"svelte",
+			"rust",
 		},
 		init_options = { documentFormatting = true },
 		settings = {
