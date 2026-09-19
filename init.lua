@@ -538,6 +538,10 @@ require("nvim-tree").setup({
 	view = {
 		width = 35,
 	},
+	update_focused_file = {
+		enable = true,
+		update_root = false, -- Set to true if you want the tree root to change to the file's directory
+	},
 	filters = {
 		dotfiles = false,
 	},
@@ -611,6 +615,7 @@ local mr = require("mason-registry")
 local packages = {
 	"lua-language-server",
 	"bash-language-server",
+	"terraform-ls",
 	"typescript-language-server",
 	"gopls",
 	"terraform-ls",
