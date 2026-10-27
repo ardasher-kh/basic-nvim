@@ -328,14 +328,13 @@ end, { desc = "Toggle diagnostics" })
 
 local augroup = vim.api.nvim_create_augroup("UserConfig", { clear = true })
 
--- Format on save (ONLY real file buffers, ONLY when efm is attached)
+-- Format on save for non-Python files (ONLY real file buffers, ONLY when efm is attached)
 vim.api.nvim_create_autocmd("BufWritePre", {
 	group = augroup,
 	pattern = {
 		"*.lua",
 		"*.rs",
 		"*.toml",
-		"*.py",
 		"*.go",
 		"*.js",
 		"*.jsx",
@@ -383,6 +382,40 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 			timeout_ms = 2000,
 			filter = function(c)
 				return c.name == "efm"
+			end,
+		})
+	end,
+})
+
+-- Python format-on-save: use Ruff only, avoiding conflicts with basedpyright.
+vim.api.nvim_create_autocmd("BufWritePre", {
+	group = augroup,
+	pattern = "*.py",
+	callback = function(args)
+		local buf = args.buf
+		if vim.bo[buf].buftype ~= "" or not vim.bo[buf].modifiable then
+			return
+		end
+		if vim.api.nvim_buf_get_name(buf) == "" then
+			return
+		end
+
+		local has_ruff = false
+		for _, client in ipairs(vim.lsp.get_clients({ bufnr = buf })) do
+			if client.name == "ruff" then
+				has_ruff = true
+				break
+			end
+		end
+		if not has_ruff then
+			return
+		end
+
+		pcall(vim.lsp.buf.format, {
+			bufnr = buf,
+			timeout_ms = 2000,
+			filter = function(client)
+				return client.name == "ruff"
 			end,
 		})
 	end,
@@ -493,7 +526,6 @@ local setup_treesitter = function()
 		"json",
 		"lua",
 		"markdown",
-		"python",
 		"typescript",
 		"vue",
 		"svelte",
@@ -622,6 +654,8 @@ local packages = {
 	"yaml-language-server",
 	"clangd",
 	"ansible-language-server",
+	"ruff",
+	"basedpyright",
 	"efm",
 }
 
@@ -706,6 +740,12 @@ local function lsp_on_attach(ev)
 	end
 
 	local bufnr = ev.buf
+
+	-- Ruff handles Python linting/formatting; let basedpyright provide hover docs.
+	if client.name == "ruff" then
+		client.server_capabilities.hoverProvider = false
+	end
+
 	local opts = { noremap = true, silent = true, buffer = bufnr }
 
 	vim.keymap.set("n", "gd", function()
@@ -765,7 +805,17 @@ local function lsp_on_attach(ev)
 				bufnr = bufnr,
 			})
 			vim.defer_fn(function()
-				vim.lsp.buf.format({ bufnr = bufnr })
+				local filetype = vim.bo[bufnr].filetype
+				vim.lsp.buf.format({
+					bufnr = bufnr,
+					timeout_ms = 2000,
+					filter = function(formatter)
+						if filetype == "python" then
+							return formatter.name == "ruff"
+						end
+						return formatter.name == "efm"
+					end,
+				})
 			end, 50)
 		end, opts)
 	end
@@ -826,9 +876,6 @@ do
 	local luacheck = require("efmls-configs.linters.luacheck")
 	local stylua = require("efmls-configs.formatters.stylua")
 
-	local flake8 = require("efmls-configs.linters.flake8")
-	local black = require("efmls-configs.formatters.black")
-
 	local prettier_d = require("efmls-configs.formatters.prettier_d")
 	local eslint_d = require("efmls-configs.linters.eslint_d")
 
@@ -856,7 +903,6 @@ do
 			"jsonc",
 			"lua",
 			"markdown",
-			"python",
 			"sh",
 			"typescript",
 			"typescriptreact",
@@ -878,7 +924,6 @@ do
 				jsonc = { eslint_d, fixjson },
 				lua = { luacheck, stylua },
 				markdown = { prettier_d },
-				python = { flake8, black },
 				sh = { shellcheck, shfmt },
 				typescript = { eslint_d, prettier_d },
 				typescriptreact = { eslint_d, prettier_d },
@@ -899,6 +944,8 @@ vim.lsp.enable({
 	"clangd",
 	"ansiblels",
 	"efm",
+	"ruff",
+	"basedpyright",
 })
 
 -- ============================================================================
